@@ -3,3 +3,6 @@ langchain-tavily
 langgraph
 requests
 python-dotenv
+pandas
+fastapi
+uvicorn
