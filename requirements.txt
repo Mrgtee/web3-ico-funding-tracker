@@ -1,5 +1,10 @@
-langgraph
+fastapi
+uvicorn
+python-dotenv
 langchain-google-genai
 langchain-tavily
+langgraph
+langgraph-checkpoint-postgres
+psycopg-pool
+psycopg[binary]
 requests
-python-dotenv
