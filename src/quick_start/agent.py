@@ -115,7 +115,8 @@ app = create_app(
     agent,
     assistant_id="web3-funding-tracker",
     title="Web3 ICO Funding Tracker",
-    description="Autonomous Web3 funding, ICO, and sentiment research agent"
+    description="Autonomous Web3 funding, ICO, and sentiment research agent",
+    chat=True
 )
 
 # 7. Railway entry point
