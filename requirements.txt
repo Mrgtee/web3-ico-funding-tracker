@@ -1,8 +1,8 @@
+fastapi
+uvicorn
 langchain-google-genai
 langchain-tavily
 langgraph
 requests
 python-dotenv
 pandas
-fastapi
-uvicorn
