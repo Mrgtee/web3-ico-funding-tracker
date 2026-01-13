@@ -1,8 +1,8 @@
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-# Expose the port Railway uses
-EXPOSE 8080
-CMD ["python", "src/quick_start/main.py"]
+# 1. Use the official LangGraph API image as the base
+FROM langchain/langgraph-api:3.11
+
+# 2. Add your project files to the container
+ADD . /deps
+
+# 3. Install your specific dependencies (requirements.txt)
+RUN pip install --no-cache-dir -e /deps

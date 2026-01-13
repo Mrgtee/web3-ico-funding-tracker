@@ -1,8 +1,5 @@
-fastapi
-uvicorn
+langgraph
 langchain-google-genai
 langchain-tavily
-langgraph
 requests
 python-dotenv
-pandas
