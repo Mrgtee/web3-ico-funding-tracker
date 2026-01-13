@@ -113,6 +113,7 @@ agent = create_react_agent(
 # 6. LangGraph Server (Warden-compatible)
 app = create_app(
     agent,
+    assistant_id="web3-funding-tracker",
     title="Web3 ICO Funding Tracker",
     description="Autonomous Web3 funding, ICO, and sentiment research agent"
 )
