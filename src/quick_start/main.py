@@ -25,14 +25,12 @@ class Query(BaseModel):
 def home():
     return {"status": "Web3 ICO & Funding Tracker is Online", "version": "2026.1"}
 
-# This endpoint tells the Vercel UI what "Assistant IDs" are available
 @app.get("/assistants")
 def list_assistants():
     return [{"assistant_id": "agent", "name": "Web3 Funding Tracker"}]
 
 @app.post("/ask")
 def ask_agent(query: Query):
-    # Standard non-streaming endpoint
     response = f"Agent received: {query.text}. (Processing funding data...)"
     return {"response": response}
 
@@ -42,20 +40,20 @@ async def chat_endpoint(request: Request):
     messages = data.get("messages", [])
     user_query = messages[-1]["content"] if messages else "Hello"
     
-    # This generator follows the Vercel AI Data Stream Protocol
     async def event_generator():
-        # '0' is the code for text parts in the Vercel protocol
-        # We wrap the string in JSON format as required
-        yield f'0:{json.dumps("Searching for latest Web3 and AI funding rounds...")}\n'
-        yield f'0:{json.dumps(f"\\n\\nI am looking into your request about: {user_query}")}\n'
+        # FIX: We moved the newlines and complex formatting OUTSIDE the { }
+        header = json.dumps("Searching for latest Web3 and AI funding rounds...")
+        yield f'0:{header}\n'
         
-        # 'd' can be used for custom data/metadata
-        yield f'd:{json.dumps({"info": "Check complete"})}\n'
+        body_text = f"\n\nI am looking into your request about: {user_query}"
+        body_json = json.dumps(body_text)
+        yield f'0:{body_json}\n'
         
-        # '2' signals the end of the stream
+        metadata = json.dumps({"info": "Check complete"})
+        yield f'd:{metadata}\n'
+        
         yield '2:{"finishReason":"stop"}\n'
 
-    # Important: Set the x-vercel-ai-ui-message-stream header
     return StreamingResponse(
         event_generator(), 
         media_type="text/plain",
