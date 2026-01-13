@@ -3,6 +3,7 @@ import warnings
 import requests
 from dotenv import load_dotenv
 from typing import Annotated, List, Optional
+from contextlib import asynccontextmanager
 
 # Core LangChain, LangGraph & API imports
 from fastapi import FastAPI, HTTPException, Request
@@ -14,6 +15,7 @@ from langchain_core.messages import HumanMessage
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.postgres import PostgresSaver
 from psycopg_pool import ConnectionPool
+from psycopg.rows import dict_row  # <--- CRITICAL FIX: Required for LangGraph
 
 # 1. Setup & Environment
 load_dotenv()
@@ -70,11 +72,39 @@ model = ChatGoogleGenerativeAI(
     temperature=0,
 )
 
-# 4. Persistence (Postgres Checkpointer)
+# 4. Persistence (Postgres Checkpointer) - ROBUST SETUP
 DB_URI = os.getenv("DATABASE_URL")
-connection_pool = ConnectionPool(conninfo=DB_URI, max_size=20)
-checkpointer = PostgresSaver(connection_pool)
-checkpointer.setup()
+checkpointer = None
+
+if DB_URI:
+    try:
+        # LangGraph requires these specific connection settings
+        connection_kwargs = {
+            "autocommit": True,
+            "prepare_threshold": 0,
+            "row_factory": dict_row,
+        }
+        
+        connection_pool = ConnectionPool(
+            conninfo=DB_URI, 
+            max_size=20, 
+            kwargs=connection_kwargs
+        )
+        
+        checkpointer = PostgresSaver(connection_pool)
+        
+        # NOTE: In production, it's safer to run setup() manually or in a migration script,
+        # but for this agent, we'll try to ensure tables exist on startup.
+        try:
+            checkpointer.setup()
+            print(" Database connected and tables verified.")
+        except Exception as setup_err:
+            print(f" Database connected but setup failed: {setup_err}")
+
+    except Exception as e:
+        print(f"DATABASE CONNECTION ERROR: {e}")
+else:
+    print("WARNING: DATABASE_URL not set. Agent will run without memory.")
 
 # 5. Compile the LangGraph Agent
 agent_app = create_react_agent(
@@ -104,10 +134,17 @@ async def ask_agent(request: ChatRequest):
     try:
         config = {"configurable": {"thread_id": request.thread_id}}
         inputs = {"messages": [HumanMessage(content=request.message)]}
+        
+        # Use ainvoke to run the agent asynchronously
         result = await agent_app.ainvoke(inputs, config=config)
+        
+        # Extract the last message content
         final_answer = result["messages"][-1].content
         return {"response": final_answer}
+        
     except Exception as e:
+        # Print error to logs for debugging
+        print(f"Error processing request: {e}")
         raise HTTPException(status_code=500, detail=f"Agent Error: {str(e)}")
 
 @server.post("/api/chat")
@@ -142,10 +179,12 @@ async def api_chat(request: AgentChatRequest):
         }
 
     except Exception as e:
+        print(f"Error in api/chat: {e}")
         raise HTTPException(status_code=500, detail=f"Agent Error: {str(e)}")
 
 # For Railway deployment
 if __name__ == "__main__":
     import uvicorn
+    # Use 8080 as default if PORT env var is missing
     port = int(os.getenv("PORT", 8080))
     uvicorn.run(server, host="0.0.0.0", port=port)
