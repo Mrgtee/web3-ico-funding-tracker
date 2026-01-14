@@ -1,9 +1,11 @@
 FROM langchain/langgraph-api:3.11
 
-ADD . /deps
+# Put your project in /app (clear + standard)
+WORKDIR /app
+COPY . .
 
-RUN pip install --no-cache-dir -r /deps/requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# The --port 8080 ensures Railway can talk to it.
-# The 'dev' command skips the license check.
-CMD ["langgraph", "dev", "--host", "0.0.0.0", "--port", "8080"]
+# Railway provides PORT env var; default to 8080 locally
+CMD ["sh", "-c", "langgraph dev --host 0.0.0.0 --port ${PORT:-8080}"]
