@@ -1,15 +1,12 @@
-FROM python:3.11-slim
+FROM python:3.9-slim
 
 WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir langgraph-api uvicorn
+EXPOSE 8000
 
-ENV LANGGRAPH_RUNTIME_EDITION=inmem
-
-CMD ["sh", "-c", "echo PORT=$PORT && python - <<'PY'\nimport os\nimport uvicorn\nfrom langgraph_api.server import app\nport = int(os.environ.get('PORT', '8080'))\nuvicorn.run(app, host='0.0.0.0', port=port)\nPY"]
-
-ENV LANGGRAPH_RUNTIME_EDITION=inmem
-ENV LANGGRAPH_CONFIG='{"graphs":{"web3-funding-tracker":"src/quick_start/agent.py:agent_app"}}'
-
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
