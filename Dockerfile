@@ -4,9 +4,8 @@ WORKDIR /app
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir langgraph langgraph-api
+RUN pip install --no-cache-dir langgraph-api uvicorn
 
-# LangGraph runtime mode (Railway will also set this as an env var; this is a safe default)
 ENV LANGGRAPH_RUNTIME_EDITION=inmem
 
-CMD ["sh", "-c", "python -m langgraph_api.server --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "echo PORT=$PORT && python - <<'PY'\nimport os\nimport uvicorn\nfrom langgraph_api.server import app\nport = int(os.environ.get('PORT', '8080'))\nuvicorn.run(app, host='0.0.0.0', port=port)\nPY"]
