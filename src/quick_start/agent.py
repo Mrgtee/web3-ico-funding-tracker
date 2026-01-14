@@ -103,7 +103,7 @@ else:
     print("WARNING: DATABASE_URL not set. Agent will run without memory.")
 
 # 5. Compile the LangGraph Agent
-agent = create_react_agent(
+ agent_app= create_react_agent(
     model,
     tools=tools,
     prompt=persona,
