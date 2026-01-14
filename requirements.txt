@@ -1,6 +1,9 @@
 fastapi
 uvicorn[standard]
-google-generativeai
+langchain-google-genai
+langchain-tavily
+langgraph
+psycopg-pool
+psycopg[binary]
 python-dotenv
-tavily-python
 requests
