@@ -1,9 +1,12 @@
-FROM langchain/langgraph-api:3.11
+FROM python:3.11-slim
 
 WORKDIR /app
+
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir langgraph langgraph-api
+RUN pip install --no-cache-dir langgraph langgraph-api langchain
 
-CMD ["sh", "-c", "langgraph dev --host 0.0.0.0 --port ${PORT:-8080}"]
+EXPOSE 8080
+
+CMD ["python", "-m", "langgraph_api.server"]
