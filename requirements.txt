@@ -8,3 +8,4 @@ langgraph-checkpoint-postgres
 psycopg-pool
 psycopg[binary]
 requests
+langgraph-api
