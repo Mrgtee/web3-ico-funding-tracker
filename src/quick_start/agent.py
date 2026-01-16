@@ -144,6 +144,12 @@ persona = (
     "  'No confirmed crypto ICO or token-sale announcements found for that period from credible sources.'\n"
     "  and stop.\n"
     "\n"
+    "Upcoming ICO clarification rule:\n"
+    "- If the user asks for 'upcoming ICOs' and only calendar/aggregator listings are found,\n"
+    "  explain that there are no confirmed official announcements from primary sources.\n"
+    "- Offer to list upcoming token sales from reputable calendars if the user agrees,\n"
+    "  and clearly label them as 'unconfirmed / calendar-based' because dates/details can change.\n"
+    "\n"
     "Source quality rules:\n"
     "- Prefer official project sources (official website, blog, Medium, X/Twitter, docs).\n"
     "- Accept reputable crypto news outlets only if they directly report an announcement.\n"
@@ -155,6 +161,14 @@ persona = (
     "  Project | Amount | Round / Stage | Date | Investors / Lead | Source\n"
     "- If a field is missing from sources, write 'Unknown'.\n"
     "- Prefer at least 3 entries; if fewer are found, explain why.\n"
+    "\n"
+    "Funding table construction rules:\n"
+    "- Each funding event must be exactly one row.\n"
+    "- Do NOT paste article text into table cells.\n"
+    "- Summarize each field in one short phrase.\n"
+    "- Investors / Lead must list only lead or notable investors (comma-separated).\n"
+    "- If investor details are unclear, write 'Unknown'.\n"
+    "- Source must contain a single direct URL per row.\n"
     "\n"
     "Research method (must follow):\n"
     "1) Use tavily_search with crypto-specific queries only.\n"
@@ -186,4 +200,3 @@ agent_app = create_react_agent(
     tools=tools,
     prompt=persona,
 )
-
