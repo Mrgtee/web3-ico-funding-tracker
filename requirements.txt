@@ -1,9 +1,6 @@
-fastapi
-uvicorn[standard]
+langgraph-cli[inmem]
+langgraph
 langchain-google-genai
 langchain-tavily
-langgraph
-psycopg-pool
-psycopg[binary]
 python-dotenv
 requests

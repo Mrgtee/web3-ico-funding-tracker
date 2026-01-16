@@ -1,14 +1,7 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "web3-funding-tracker": "src.quick_start.agent:agent_app"
+    "web3-funding-tracker": "./src/quick_start/agent.py:agent_app"
   },
-  "http": {
-    "cors": {
-      "allow_origins": ["*"],
-      "allow_methods": ["*"],
-      "allow_headers": ["*"],
-      "allow_credentials": true
-    }
-  }
+  "env": ".env"
 }
