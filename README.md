@@ -108,6 +108,8 @@ These endpoints are compatible with the Warden App runtime.
 ```
 Hello
 What do you do?
+Give me the latest crypto news today. Include links
+Give me the latest crypto news for BTC. Include links
 List recent Web3 funding rounds
 Any ICO announcements in the last 24 hours?
 When was the Cysic token claim?
